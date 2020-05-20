@@ -1,0 +1,40 @@
+#:kivy 1.11.0
+
+BoxLayout:
+    orientation: "vertical"
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint: (1, .1)
+        Button:
+            text: "Menu"
+            size_hint: (.1, 1)
+        Label:
+            text: "Call Popandupolo and command!"
+            size_hint: (.9, 1)
+            text_size: self.size
+            font_size: 20
+            halign: "center"
+            valign: "middle"
+    GridLayout:
+        cols: 2
+        size_hint: (.9, .9)
+        Button:
+            text: "Light in the bath\n\n[b][color=#FF0000]Off[/color][/b]"
+            markup: True
+            font_size: 18
+            halign: "center"
+            valign: "middle"
+        Button:
+            text: "Bath air heater\n\n[b][color=#00FF00]On[/color][/b]"
+            markup: True
+            font_size: 18
+            halign: "center"
+            valign: "middle"
+        Button:
+            text: "Bath water heater\n\n[b][color=#00FF00]On[/color][/b]"
+            markup: True
+            font_size: 18
+            halign: "center"
+            valign: "middle"
+        
+
