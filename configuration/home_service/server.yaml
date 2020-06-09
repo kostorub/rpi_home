@@ -1,3 +1,7 @@
 server:
   host: "127.0.0.1"
   port: 7272
+bindings:
+  0:
+    name: "Light test"
+    bcm_pin: 5
