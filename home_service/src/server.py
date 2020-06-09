@@ -32,8 +32,10 @@ class ControlHandler(asyncore.dispatcher_with_send):
             if raspberry:
                 relay = gpiozero.LED(bcm_pin)
                 if data[1]:
+                    print("Relay on")
                     relay.on()
                 else:
+                    print("Relay off")
                     relay.off()
             
             self.send(str(data).encode())
