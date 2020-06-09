@@ -9,3 +9,6 @@ class Configuration:
 
     def __getitem__(self, key):
         return self.config.get(key)
+
+    def __repr__(self):
+        return str(self.config)
