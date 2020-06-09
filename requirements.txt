@@ -1,0 +1,6 @@
+gpiozero==1.5.1
+pytest==5.4.2
+pyyaml==5.3.1
+Kivy==1.11.1
+PyAudio==0.2.11
+vosk==0.3.7
