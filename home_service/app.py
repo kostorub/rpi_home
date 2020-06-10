@@ -6,9 +6,9 @@ from src.models.controller_service import ControllerService
 import os
 
 
-config_path = os.environ.get("SERVER_CONFIG_PATH", "configuration/home_service/server.yaml")
+config_path = os.environ.get("SERVER_CONFIG_PATH", "configuration/home_service")
 
-config = Configuration(config_path)
+config = Configuration(config_path, "server.yaml")
 
 controllers = ControllerList([ControllerService(binding["bcm_pin"], binding["name"]) for binding in config["bindings"]])
 

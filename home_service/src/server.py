@@ -1,7 +1,5 @@
 import asyncore
 import struct
-import gpiozero
-
 
 class ControlHandler(asyncore.dispatcher_with_send):
 
