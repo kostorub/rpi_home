@@ -12,5 +12,9 @@ config = Configuration(config_path, "server.yaml")
 
 controllers = ControllerList([ControllerService(binding["bcm_pin"], binding["name"]) for binding in config["bindings"]])
 
-server = ControlServer(config["server"]["host"], int(config["server"]["port"]), controllers=controllers)
+server = ControlServer(
+    config["server"]["host"], 
+    int(config["server"]["port"]), 
+    config=config, 
+    controllers=controllers)
 asyncore.loop()
