@@ -14,10 +14,10 @@ class ControllerService(Controller):
         else:
             self.off()
 
-    def on():
+    def on(self):
         print(self, " on() method")
         self.relay.on()
 
-    def off():
+    def off(self):
         print(self, " off() method")
         self.relay.off()

@@ -40,10 +40,10 @@ class Controller:
     def __repr__(self):
         return f"Class: {self.__class__.__name__}, name: {self.name}, status: {self.state}"
 
-    def off():
+    def off(self):
         raise NotImplementedError
 
-    def on():
+    def on(self):
         raise NotImplementedError
 
 
