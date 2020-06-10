@@ -13,29 +13,43 @@ config_path = os.environ.get(
 
 config = Configuration(config_path, "server.yaml")
 
+template = config["struct_template"]
+
 controllers = ControllerList(
     [ControllerApp(
         binding["bcm_pin"], 
         binding["name"]
         ) for binding in config["bindings"]])
 
-# Initialize a TCP client socket using SOCK_STREAM
-tcp_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+count = 5
+while count:
+    # Initialize a TCP client socket using SOCK_STREAM
+    tcp_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-try:
-    # Establish connection to TCP server and exchange data
-    tcp_client.connect(
-        (config["server"]["host"], int(config["server"]["port"])))
+    try:
+        # Establish connection to TCP server and exchange data
+        tcp_client.connect(
+            (config["server"]["host"], int(config["server"]["port"])))
 
-    data = controllers["Light test"].pack_data(True)
-    print(data)
+        controller = controllers["Light test"]
+        if controller.state:
+            data = struct.pack(template, controller.pin, False)
+        else:
+            data = struct.pack(template, controller.pin, True)
+        print(data)
 
-    tcp_client.sendall(data)
+        tcp_client.sendall(data)
 
-    # Read data from the TCP server and close the connection
-    received = tcp_client.recv(1024)
-finally:
-    tcp_client.close()
+        # Read data from the TCP server and close the connection
+        received = tcp_client.recv(1024)
+        data = struct.unpack(template, received)
+
+        controllers[data[0]].state = data[1]
+    finally:
+        tcp_client.close()
+
+    sleep(2)
+    count -= 1
 
 print("Bytes Sent:     {}".format(data))
 print("Bytes Received: {}".format(received.decode()))
