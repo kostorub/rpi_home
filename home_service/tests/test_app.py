@@ -1,6 +1,7 @@
 import os
 import socket
 import struct
+from time import sleep
 
 import pytest
 
