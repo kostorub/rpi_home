@@ -5,7 +5,7 @@ class ControllerService(Controller):
         super(ControllerService).__init__(self, bcm_pin, name)
         self.relay = gpio.LED(bcm_pin)
 
-    def parse_data(value):
+    def unpack_data(value):
         data = struct.unpack(self.struct_template, value)
         bcm_pin = data[0]
         activate = data[1]

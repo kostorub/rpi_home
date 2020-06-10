@@ -10,7 +10,7 @@ class ControlHandler(asyncore.dispatcher_with_send):
     def handle_read(self):
         data = self.recv(8192)
         if data:
-            self.controllers[bcm_pin].parse_data(data)
+            self.controllers[bcm_pin].unpack_data(data)
         self.send(str(data).encode())
         
 
