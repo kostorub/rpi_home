@@ -3,6 +3,13 @@ import os
 
 class Controller:
     __counter = -1
+    """
+    Description of the struct_template
+    < - little-endian
+    0 - h - integer (short 2 bytes) - bcm_pin
+    1 - ? - bool (Bool 1 byte) - on/off (0/1)
+    """
+    struct_template = "<h?"
 
     def __init__(self, bcm_pin, name=None):
         self.relay = gpio.LED(bcm_pin)
