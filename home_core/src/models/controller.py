@@ -12,18 +12,25 @@ class Controller:
     struct_template = "<h?"
 
     def __init__(self, bcm_pin, name=None):
-        self.relay = gpio.LED(bcm_pin)
+        self.__pin = bcm_pin 
+        self.__state = 0
         self.__name = name or f"{self.__class__.__name__}_{Controller._counter_()}"
 
     @property
     def name(self):
         return self.__name
     
+    @property
     def state(self):
-        return self.relay.value
+        return self.__state
 
+    @state.setter
+    def state(self, value):
+        self.__state = value
+
+    @property
     def pin(self):
-        return self.relay.pin
+        return self.__pin
 
     @staticmethod
     def _counter_():
@@ -41,9 +48,9 @@ class Controller:
 
 
 if __name__ == "__main__":
-    controller = Controller()
+    controller = Controller(5)
     print(controller.name)
-    controller = Controller()
+    controller = Controller(5)
     print(controller)
     print(controller.name)
     print(controller.state)
