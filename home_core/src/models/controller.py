@@ -1,9 +1,8 @@
-import gpiozero as gpio
 import os
 
 class Controller:
     __counter = -1
-    
+
     def __init__(self, bcm_pin, name=None):
         self.__pin = bcm_pin 
         self.__state = 0

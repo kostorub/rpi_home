@@ -1,11 +1,13 @@
 import struct
 
+import gpiozero as gpio
+
 from home_core.src.models.controller import Controller
 
 
 class ControllerService(Controller):
     def __init__(self, bcm_pin, name=None):
-        super(ControllerService).__init__(self, bcm_pin, name)
+        super(ControllerService, self).__init__(bcm_pin, name)
         self.relay = gpio.LED(bcm_pin)
 
     def on(self):
