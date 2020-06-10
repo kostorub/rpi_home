@@ -45,6 +45,7 @@ while count:
         data = struct.unpack(template, received)
 
         controllers[data[0]].state = data[1]
+        property(controllers[data[0]])
     finally:
         tcp_client.close()
 
