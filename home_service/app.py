@@ -1,6 +1,6 @@
 from src.server import ControlServer
 import asyncore
-from src.configuration.configuration import Configuration
+from home_core.configuration.configuration import Configuration
 import os
 
 
