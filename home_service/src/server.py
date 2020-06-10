@@ -2,18 +2,12 @@ import asyncore
 import struct
 import gpiozero
 
-raspberry = False
-try:
-    gpiozero.pi_info()
-    raspberry = True
-except:
-    print("This is not raspberry")
 
 class ControlHandler(asyncore.dispatcher_with_send):
 
-    def __init__(self, sock=None, map=None, config={}):
+    def __init__(self, sock=None, map=None, controllers={}):
         super(ControlHandler, self).__init__(sock)
-        self.config = config
+        self.controllers = controllers
 
     def handle_read(self):
         """
@@ -23,20 +17,14 @@ class ControlHandler(asyncore.dispatcher_with_send):
         1 - ? - bool (Bool 1 byte) - on/off (0/1)
         """
         data = self.recv(8192)
-        print(data)
         if data:
             data = struct.unpack("<h?", data)
-            print(data)
-            bcm_pin = self.config["bindings"][data[0]]["bcm_pin"]
-            print(self.config["bindings"][data[0]])
-            if raspberry:
-                relay = gpiozero.LED(bcm_pin)
-                if data[1]:
-                    print("Relay on")
-                    relay.on()
-                else:
-                    print("Relay off")
-                    relay.off()
+            bcm_pin = data[0]
+            activate = data[1]
+            if activate:
+                self.controllers[bcm_pin].on()
+            else:
+                self.controllers[bcm_pin].off()
             
             self.send(str(data).encode())
         
@@ -45,7 +33,7 @@ class ControlServer(asyncore.dispatcher):
 
     def __init__(self, host, port, **kwargs):
         asyncore.dispatcher.__init__(self)
-        self.config = kwargs.get("config", {})
+        self.controllers = kwargs.get("controllers", {})
         self.ignore_log_types = []
         self.create_socket()
         self.set_reuse_addr()
@@ -54,5 +42,4 @@ class ControlServer(asyncore.dispatcher):
 
     def handle_accepted(self, sock, addr):
         print('Incoming connection from %s' % repr(addr))
-        # handler = ControlHandler(sock=sock, config=self.config)
-        handler = ControlHandler(sock, config=self.config)
+        handler = ControlHandler(sock, controllers=self.controllers)
