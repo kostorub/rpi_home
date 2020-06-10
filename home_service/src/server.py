@@ -20,7 +20,7 @@ class ControlHandler(asyncore.dispatcher_with_send):
             else:
                 controller.off()
 
-            self.send(pack_data(controller))
+            self.send(self.pack_data(controller))
 
     def unpack_data(self, value):
         data = struct.unpack(self.template, value)
