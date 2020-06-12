@@ -13,6 +13,9 @@ class ControllerList:
             if isinstance(value, int):
                 if controller.pin == value:
                     return controller
+    
+    def __iter__(self):
+        return iter(self.controllers)
 
 if __name__ == "__main__":
     controllers = ControllerList()
