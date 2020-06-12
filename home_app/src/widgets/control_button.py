@@ -27,3 +27,11 @@ class ControlButton(Button):
             self.text = "[color=#00FF00]" + self.controller.name + "[/color]"
         else:
             self.text = "[color=#FF0000]" + self.controller.name + "[/color]"
+
+    def get_remote_state(self):
+        ServiceClient(
+            config["server"]["host"], 
+            config["server"]["port"],
+            self.controller,
+            self.on_send,
+            get_remote_status=True)

@@ -13,8 +13,11 @@ class ControlHandler(asyncore.dispatcher_with_send):
     def handle_read(self):
         data = self.recv(8192)
         if data:
-            bcm_pin, activate = self.unpack_data(data)
+            bcm_pin, activate, get_status = self.unpack_data(data)
             controller = self.controllers[bcm_pin]
+            if get_status:
+                self.send(self.pack_data(controller))
+                return
             if activate:
                 controller.on()
             else:
@@ -24,7 +27,7 @@ class ControlHandler(asyncore.dispatcher_with_send):
 
     def unpack_data(self, value):
         data = struct.unpack(self.template, value)
-        return data[0], data[1]
+        return data[0], data[1], data[2]
 
     def pack_data(self, controller):
         return struct.pack(self.template, controller.pin, controller.state)
