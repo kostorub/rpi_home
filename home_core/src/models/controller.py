@@ -5,7 +5,7 @@ class Controller:
 
     def __init__(self, bcm_pin, name=None):
         self.__pin = bcm_pin 
-        self.__state = 0
+        self.__state = False
         self.__name = name or f"{self.__class__.__name__}_{Controller._counter_()}"
 
     @property
