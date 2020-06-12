@@ -1,12 +1,16 @@
 import asyncore
+import struct
+from src.common import config
 
 class ServiceClient(asyncore.dispatcher):
 
-    def __init__(self, host, port, data: bytes):
+    def __init__(self, host, port, controller, callback):
         asyncore.dispatcher.__init__(self)
         self.create_socket()
         self.connect( (host, port) )
-        self.buffer = data
+        self.controller = controller
+        self.callback = callback
+        self.buffer = self.pack_data(controller)
 
     def handle_connect(self):
         pass
@@ -15,7 +19,9 @@ class ServiceClient(asyncore.dispatcher):
         self.close()
 
     def handle_read(self):
-        print(self.recv(8192))
+        bcm_pin, state = self.unpack_data(self.recv(8192))
+        print(bcm_pin, state)
+        self.callback(state)
 
     def writable(self):
         return (len(self.buffer) > 0)
@@ -23,3 +29,13 @@ class ServiceClient(asyncore.dispatcher):
     def handle_write(self):
         sent = self.send(self.buffer)
         self.buffer = self.buffer[sent:]
+
+    def pack_data(self, controller):
+        return struct.pack(
+            config["struct_template"], 
+            controller.pin, 
+            controller.state)
+
+    def unpack_data(self, value):
+        data = struct.unpack(config["struct_template"], value)
+        return data[0], data[1]
