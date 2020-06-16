@@ -30,7 +30,7 @@ class ControlHandler(asyncore.dispatcher_with_send):
         return data[0], data[1], data[2]
 
     def pack_data(self, controller):
-        return struct.pack(self.template, controller.pin, controller.state)
+        return struct.pack(self.template, controller.pin, controller.state, False)
 
 
 class ControlServer(asyncore.dispatcher):
