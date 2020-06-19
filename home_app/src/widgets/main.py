@@ -9,6 +9,7 @@ from src.common import config, model_path
 from src.models.controller_app import ControllerApp
 from src.speech_recognition import SpeechRecognition
 from src.widgets.control_button import ControlButton
+from threading import Timer
 
 
 class MainWidget(BoxLayout):
@@ -17,7 +18,11 @@ class MainWidget(BoxLayout):
 
         self.sr = SpeechRecognition(model_path)
 
-        Clock.schedule_interval(partial(self.sr.recognition_loop, callback=self.on_speech), 0.1)
+        Clock.schedule_interval(
+            partial(
+                self.sr.recognition_loop, 
+                callback_speech=self.on_speech,
+                callback_permission=self.check_call_sign), 0.1)
 
         self.controllers = ControllerList(
             [ControllerApp(
@@ -33,6 +38,20 @@ class MainWidget(BoxLayout):
 
     def on_speech(self, text):
         self.ids.label_speech.text = text
+    
+    def check_call_sign(self, text):
+        if text == config["call_sign"]:
+            self.allow_command()
+
+    def allow_command(self):
+        self.ids.label_permission.color = (0, 1, 0, 1)
+        self.sr.can_command = True
+        self.timer = Timer(15, self.deny_command)
+        self.timer.start()
+
+    def deny_command(self):
+        self.ids.label_permission.color = (1, 0, 0, 1)
+        self.sr.can_command = False
 
 
 class MainApp(App):

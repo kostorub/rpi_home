@@ -18,6 +18,8 @@ class SpeechRecognition:
         self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
         self.stream.start_stream()
 
+        self.can_command = False
+
     def recognition_loop(self, *args, **kwargs):
         data = self.stream.read(4000)
         if len(data) == 0:
@@ -27,6 +29,12 @@ class SpeechRecognition:
             text = result.get("text")
             if not text:
                 text = "Speak!"
-            callback = kwargs.get("callback")
-            if callback:
-                callback(text)
+            
+            callback_permission = kwargs.get("callback_permission")
+            if callback_permission and not self.can_command:
+                callback_permission(text)
+                return
+
+            callback_speech = kwargs.get("callback_speech")
+            if callback_speech:
+                callback_speech(text)

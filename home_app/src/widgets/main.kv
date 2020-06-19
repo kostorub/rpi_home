@@ -11,11 +11,17 @@
         Label:
             id: label_speech
             text: "Call Popandupolo and command!"
-            size_hint: (.9, 1)
+            size_hint: (.8, 1)
             text_size: self.size
             font_size: 20
             halign: "center"
             valign: "middle"
+        Label:
+            id: label_permission
+            text: "V"
+            color: (1, 0, 0, 1)
+            size_hint: (.1, 1)
+            font_size: 30
     GridLayout:
         id: grid_control_buttons
         cols: 2

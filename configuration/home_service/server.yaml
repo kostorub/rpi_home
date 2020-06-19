@@ -1,5 +1,5 @@
 server:
-  host: "127.0.0.1"
+  host: "192.168.2.218"
   port: 7272
 
 # Description of the struct_template
@@ -12,5 +12,9 @@ struct_template: "<h??"
 bindings:
   - name: "Light test"
     bcm_pin: 5
+    phrase: "включи свет номер 1"
   - name: "Another light test"
     bcm_pin: 6
+    phrase: "включи свет номер 2"
+
+call_sign: "слушай"
