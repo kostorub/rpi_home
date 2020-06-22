@@ -11,7 +11,6 @@ from src.speech_recognition import SpeechRecognition
 from src.widgets.control_button import ControlButton
 from threading import Timer
 
-
 class MainWidget(BoxLayout):
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
@@ -26,10 +25,11 @@ class MainWidget(BoxLayout):
 
         self.controllers = ControllerList(
             [ControllerApp(
-                binding["bcm_pin"], 
+                binding["bcm_pin"],
+                binding["phrase_on"],
+                binding["phrase_off"],
                 binding["name"]) for binding in config["bindings"]])
-        print(self.controllers)
-
+                
         for controller in self.controllers:
             button = ControlButton(
                 controller=controller, 
@@ -38,6 +38,12 @@ class MainWidget(BoxLayout):
 
     def on_speech(self, text):
         self.ids.label_speech.text = text
+        controller, state = self.controllers.find_similar_phrase(text)
+        if controller:
+            callback = controller.button.on_send
+            controller.on(on_send=callback) \
+                if state else \
+                    controller.off(on_send=callback)
     
     def check_call_sign(self, text):
         if text == config["call_sign"]:
@@ -46,7 +52,7 @@ class MainWidget(BoxLayout):
     def allow_command(self):
         self.ids.label_permission.color = (0, 1, 0, 1)
         self.sr.can_command = True
-        self.timer = Timer(15, self.deny_command)
+        self.timer = Timer(30, self.deny_command)
         self.timer.start()
 
     def deny_command(self):
