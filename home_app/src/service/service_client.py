@@ -1,6 +1,11 @@
 import asyncore
 import struct
+from asyncore import poll
+
+from kivy.clock import Clock
+
 from src.common import config
+
 
 class ServiceClient(asyncore.dispatcher):
 
@@ -14,15 +19,17 @@ class ServiceClient(asyncore.dispatcher):
         self.buffer = self.pack_data(controller)
 
     def handle_connect(self):
-        pass
+        self.event = Clock.schedule_interval(poll, 0)
 
     def handle_close(self):
         self.close()
+        self.event.cancel()
 
     def handle_read(self):
-        bcm_pin, state = self.unpack_data(self.recv(8192))
+        bcm_pin, state = self.unpack_data(self.recv(64))
         print(bcm_pin, state)
         self.callback(state)
+        self.handle_close()
 
     def writable(self):
         return (len(self.buffer) > 0)
