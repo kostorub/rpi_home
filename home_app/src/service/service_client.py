@@ -17,9 +17,10 @@ class ServiceClient(asyncore.dispatcher):
         self.callback = callback
         self.get_remote_status = kwargs.get("get_remote_status", 0)
         self.buffer = self.pack_data(controller)
+        self.event = Clock.schedule_interval(poll, 0)
 
     def handle_connect(self):
-        self.event = Clock.schedule_interval(poll, 0)
+        pass
 
     def handle_close(self):
         self.close()

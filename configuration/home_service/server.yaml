@@ -12,9 +12,15 @@ struct_template: "<h??"
 bindings:
   - name: "Light test"
     bcm_pin: 5
-    phrase: "включи свет номер 1"
+    phrase_on: "включи свет номер один"
+    phrase_off: "выключи свет номер один"
   - name: "Another light test"
     bcm_pin: 6
-    phrase: "включи свет номер 2"
+    phrase_on: "включи свет номер два"
+    phrase_off: "выключи свет номер два"
+sensors:
+  - name: "Temperature and humidity"
+    bcm_pin: 16
+    phrase: "какая температура"
 
-call_sign: "слушай"
+call_sign: "бэрримор"

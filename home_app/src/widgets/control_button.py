@@ -19,7 +19,6 @@ class ControlButton(Button):
             if self.controller.state else \
                 self.controller.on(on_send=self.on_send)
 
-
     def on_send(self, state):
         self.controller.state = state
         if state:
