@@ -12,16 +12,16 @@ class SpeechRecognition:
             exit (1)
 
         self.model = Model(path)
-        self.rec = KaldiRecognizer(self.model, 16000)
+        self.rec = KaldiRecognizer(self.model, 48000)
 
         self.p = pyaudio.PyAudio()
-        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
+        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=48000, input=True, frames_per_buffer=48000)
         self.stream.start_stream()
 
         self.can_command = False
 
     def recognition_loop(self, *args, **kwargs):
-        data = self.stream.read(4000)
+        data = self.stream.read(48000)
         if len(data) == 0:
             return
         if self.rec.AcceptWaveform(data):
@@ -38,3 +38,5 @@ class SpeechRecognition:
             callback_speech = kwargs.get("callback_speech")
             if callback_speech:
                 callback_speech(text)
+        else:
+            print(self.rec.PartialResult())
