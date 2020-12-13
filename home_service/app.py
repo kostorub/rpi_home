@@ -1,5 +1,5 @@
 import asyncio
-from home_core.src.configuration.configuration import Configuration
+from home_service.src.configuration.configuration import Configuration
 from src.models.device_list import DeviceList
 from src.models.relay import Relay
 from gpiozero import Button

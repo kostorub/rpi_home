@@ -4,7 +4,7 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 
-from home_core.src.models.controller_list import ControllerList
+from home_service.src.models.device_list import DeviceList
 from src.common import config, model_path
 from src.models.controller_app import ControllerApp
 from src.speech_recognition import SpeechRecognition
@@ -15,20 +15,20 @@ class MainWidget(BoxLayout):
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
 
-        self.sr = SpeechRecognition(model_path)
+        # self.sr = SpeechRecognition(model_path)
 
-        Clock.schedule_interval(
-            partial(
-                self.sr.recognition_loop, 
-                callback_speech=self.on_speech,
-                callback_permission=self.check_call_sign), 0.1)
+        # Clock.schedule_interval(
+        #     partial(
+        #         self.sr.recognition_loop, 
+        #         callback_speech=self.on_speech,
+        #         callback_permission=self.check_call_sign), 0.1)
 
-        self.controllers = ControllerList(
+        self.controllers = DeviceList(
             [ControllerApp(
-                binding["bcm_pin"],
-                binding["phrase_on"],
-                binding["phrase_off"],
-                binding["name"]) for binding in config["bindings"]])
+                relay["bcm_pin"],
+                relay["phrase_on"],
+                relay["phrase_off"],
+                relay["name"]) for relay in config["relays"]])
                 
         for controller in self.controllers:
             button = ControlButton(
