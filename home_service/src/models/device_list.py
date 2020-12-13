@@ -8,7 +8,7 @@ class DeviceList:
                 if device.name == value:
                     return device
             if isinstance(value, int):
-                if device.pin == value:
+                if device.pin.number == value:
                     return device
         else:
             raise Exception(f"No device found on this pin: {value}")
