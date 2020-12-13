@@ -46,7 +46,7 @@ def unpack_data(value):
     return data[0], data[1], data[2]
 
 def pack_data(relay):
-    return struct.pack(config["struct_template"], relay.pin, relay.value, False)
+    return struct.pack(config["struct_template"], relay.pin.number, relay.value, False)
 
 loop = asyncio.get_event_loop()
 coro = asyncio.start_server(control_server, config["server"]["host"], int(config["server"]["port"]), loop=loop)
