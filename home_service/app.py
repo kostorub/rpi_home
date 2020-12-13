@@ -35,7 +35,7 @@ async def control_server(reader, writer):
             relay.off()
 
 
-    writer.write(b"fff")
+    writer.write(pack_data(relay))
     await writer.drain()
 
     print("Close the client socket")
