@@ -12,7 +12,7 @@ config_path = os.environ.get("SERVER_CONFIG_PATH", "configuration/home_service")
 config = Configuration(config_path, "server.yaml")
 
 relays = DeviceList([Relay(relay["bcm_pin"], relay["phrase_on"], relay["phrase_off"]) for relay in config["relays"]])
-buttons = DeviceList([Button(button["bcm_pin"], button["name"]) for button in config["buttons"]])
+buttons = DeviceList([Button(button["bcm_pin"]) for button in config["buttons"]])
 
 async def control_server(reader, writer):
     data = await reader.read(10)
