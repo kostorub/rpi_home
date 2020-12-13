@@ -36,11 +36,11 @@ async def control_server(reader, writer):
     print("Close the client socket")
     writer.close()
 
-def unpack_data(self, value):
+def unpack_data(value):
     data = struct.unpack(config["struct_template"], value)
     return data[0], data[1], data[2]
 
-def pack_data(self, relay):
+def pack_data(relay):
     return struct.pack(config["struct_template"], relay.pin, relay.value, False)
 
 loop = asyncio.get_event_loop()
