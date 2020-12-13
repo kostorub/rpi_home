@@ -1,33 +1,10 @@
 import os
 
 class Controller:
-    __counter = -1
-
     def __init__(self, bcm_pin, name=None):
-        self.__pin = bcm_pin 
-        self.__state = False
-        self.__name = name or f"{self.__class__.__name__}_{Controller._counter_()}"
-
-    @property
-    def name(self):
-        return self.__name
-    
-    @property
-    def state(self):
-        return self.__state
-
-    @state.setter
-    def state(self, value):
-        self.__state = value
-
-    @property
-    def pin(self):
-        return self.__pin
-
-    @staticmethod
-    def _counter_():
-        Controller.__counter += 1
-        return Controller.__counter
+        self.pin = bcm_pin 
+        self.state = False
+        self.name = name
 
     def __repr__(self):
         return f"Class: {self.__class__.__name__}, name: {self.name}, status: {self.state}"

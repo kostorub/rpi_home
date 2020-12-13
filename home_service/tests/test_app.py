@@ -4,10 +4,10 @@ import struct
 from time import sleep
 
 import pytest
-
-from home_app.src.controller_app import ControllerApp
+from home_service.src.models.device_list import DeviceList
+from home_service.src.models.relay import Relay
 from home_core.src.configuration.configuration import Configuration
-from home_core.src.models.controller_list import ControllerList
+
 
 config_path = os.environ.get(
     "SERVER_CONFIG_PATH", "configuration/home_service")
@@ -16,11 +16,18 @@ config = Configuration(config_path, "server.yaml")
 
 template = config["struct_template"]
 
-controllers = ControllerList(
-    [ControllerApp(
-        binding["bcm_pin"], 
-        binding["name"]
-        ) for binding in config["bindings"]])
+controllers = DeviceList()
+
+for item in config["relays"]:
+    relay = Relay(
+        item["bcm_pin"], 
+        item["phrase_on"],
+        item["phrase_off"])
+    relay.name = item["name"]
+    relay.value = 1
+    relay.pin = 5
+    controllers.append(relay)
+
 
 count = 5
 while count:
@@ -33,10 +40,10 @@ while count:
             (config["server"]["host"], int(config["server"]["port"])))
 
         controller = controllers["Light test"]
-        if controller.state:
-            data = struct.pack(template, controller.pin, False)
+        if controller.value:
+            data = struct.pack(template, controller.pin, False, False)
         else:
-            data = struct.pack(template, controller.pin, True)
+            data = struct.pack(template, controller.pin, True, False)
         print(data)
 
         tcp_client.sendall(data)

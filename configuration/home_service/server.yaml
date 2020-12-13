@@ -9,7 +9,7 @@ server:
 # 2 - ? - bool (Bool 1 byte) - get_remote_status (0/1)
 
 struct_template: "<h??"
-bindings:
+relays:
   - name: "Light test"
     bcm_pin: 5
     phrase_on: "включи свет номер один"
@@ -18,6 +18,10 @@ bindings:
     bcm_pin: 6
     phrase_on: "включи свет номер два"
     phrase_off: "выключи свет номер два"
+buttons:
+  - name: "Light test button"
+    bcm_pin: 16
+    control_pin: 5
 sensors:
   - name: "Temperature and humidity"
     bcm_pin: 16
