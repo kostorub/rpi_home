@@ -1,53 +1,51 @@
 import asyncore
 import struct
+import asyncio
+
+class Server:
+    def __init__(self, host, port, loop=None, **kwargs):
+        self._loop = loop or asyncio.get_event_loop()
+        self._coro = asyncio.start_server(self.handler, host, port, loop=self._loop)
+    
+    def start(self):
+        self._server = self._loop.run_until_complete(self._coro)
+        print('Serving on {}'.format(self._server.sockets[0].getsockname()))
+        try:
+            self._loop.run_forever()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            # Close the server
+            self._server.close()
+            self._loop.run_until_complete(self._server.wait_closed())
+            self._loop.close()
 
 
-class ControlHandler(asyncore.dispatcher_with_send):
-
-    def __init__(self, sock=None, map=None, **kwargs):
-        super(ControlHandler, self).__init__(sock)
-        self.controllers = kwargs.get("controllers")
-        self.config = kwargs.get("config")
-        self.template = self.config["struct_template"]
-
-    def handle_read(self):
-        data = self.recv(8192)
+    async def handler(reader, writer):
+        data = await reader.read(10)
+        addr = writer.get_extra_info('peername')
+        print(f"Received {data} from {addr}")
         if data:
-            bcm_pin, activate, get_status = self.unpack_data(data)
-            controller = self.controllers[bcm_pin]
+            bcm_pin, activate, get_status = unpack_data(data)
+            relay = relays[bcm_pin]
             if get_status:
-                self.send(self.pack_data(controller))
-                return
+                writer.write(pack_data(relay))
+                await writer.drain()
             if activate:
-                controller.on()
+                relay.on()
             else:
-                controller.off()
+                relay.off()
 
-            self.send(self.pack_data(controller))
 
-    def unpack_data(self, value):
-        data = struct.unpack(self.template, value)
+        writer.write(pack_data(relay))
+        await writer.drain()
+
+        print("Close the client socket")
+        writer.close()
+
+    def unpack_data(value):
+        data = struct.unpack(config["struct_template"], value)
         return data[0], data[1], data[2]
 
-    def pack_data(self, controller):
-        return struct.pack(self.template, controller.pin, controller.state, False)
-
-
-class ControlServer(asyncore.dispatcher):
-
-    def __init__(self, host, port, **kwargs):
-        asyncore.dispatcher.__init__(self)
-        self.controllers = kwargs.get("controllers")
-        self.config = kwargs.get("config")
-        self.ignore_log_types = []
-        self.create_socket()
-        self.set_reuse_addr()
-        self.bind((host, port))
-        self.listen(5)
-
-    def handle_accepted(self, sock, addr):
-        print('Incoming connection from %s' % repr(addr))
-        handler = ControlHandler(
-            sock, 
-            config=self.config, 
-            controllers=self.controllers)
+    def pack_data(relay):
+        return struct.pack(config["struct_template"], relay.pin, relay.value, False)
