@@ -3,7 +3,7 @@ from src.models.configuration import Configuration
 from src.models.device_list import DeviceList
 from src.models.relay import Relay
 from src.server import Server
-from gpiozero import Button
+from src.models.button import Button
 import os
 import struct
 
@@ -18,7 +18,12 @@ relays = DeviceList([
         relay["phrase_off"],
         relay["name"]) for relay in config["relays"]])
 
-buttons = DeviceList([Button(button["bcm_pin"]) for button in config["buttons"]])
+buttons = DeviceList([
+    Button(
+        button["bcm_pin"],
+        button["control_pin"],
+        button["name"],
+        relays) for button in config["buttons"]])
 
 server = Server(config["server"]["host"], int(config["server"]["port"]), relays=relays)
 server.start()

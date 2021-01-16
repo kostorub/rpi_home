@@ -23,7 +23,7 @@ class Server:
 
     async def handler(reader, writer):
         data = await reader.read(10)
-        addr = writer.get_extra_info('peername')
+        addr = writer.get_extra_info("peername")
         print(f"Received {data} from {addr}")
         if data:
             bcm_pin, activate, get_status = unpack_data(data)
