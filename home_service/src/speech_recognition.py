@@ -15,11 +15,13 @@ class SpeechRecognition:
             print ("Please download the model from https://github.com/alphacep/vosk-api/blob/master/doc/models.md and unpack as 'model' in the current folder.")
             exit (1)
 
+        self.chunk = 1024 * 48
+
         self.model = Model(path)
-        self.rec = KaldiRecognizer(self.model, 48000)
+        self.rec = KaldiRecognizer(self.model, self.chunk)
 
         self.p = pyaudio.PyAudio()
-        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=48000, input=True, frames_per_buffer=48000)
+        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=self.chunk)
         self.stream.start_stream()
 
         self.can_command = False
@@ -35,7 +37,7 @@ class SpeechRecognition:
 
     async def recognition_loop(self, *args, **kwargs):
         while True:
-            data = self.stream.read(48000)
+            data = self.stream.read(self.chunk, False)
             if len(data) == 0:
                 return
             if self.rec.AcceptWaveform(data):
