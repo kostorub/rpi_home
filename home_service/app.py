@@ -1,9 +1,11 @@
 import asyncio
+from functools import partial
 from src.models.configuration import Configuration
 from src.models.device_list import DeviceList
 from src.models.relay import Relay
 from src.server import Server
 from src.models.button import Button
+from src.speech_recognition import SpeechRecognition
 import os
 import struct
 
@@ -25,5 +27,10 @@ buttons = DeviceList([
         button["name"],
         relays) for button in config["buttons"]])
 
-server = Server(config["server"]["host"], int(config["server"]["port"]), relays=relays)
+loop = asyncio.get_event_loop()
+
+model_path = os.environ.get("MODEL_PATH", "home_service/model")
+sr = SpeechRecognition(model_path, config, relays, loop)
+
+server = Server(config, loop, relays=relays)
 server.start()

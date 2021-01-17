@@ -3,22 +3,22 @@ import struct
 import asyncio
 
 class Server:
-    def __init__(self, host, port, loop=None, **kwargs):
-        self._loop = loop or asyncio.get_event_loop()
-        self._coro = asyncio.start_server(self.handler, host, port, loop=self._loop)
+    def __init__(self, config, loop=None, **kwargs):
+        self.loop = loop or asyncio.get_event_loop()
+        self._coro = asyncio.start_server(self.handler, config["server"]["host"], int(config["server"]["port"]), loop=self.loop)
     
     def start(self):
-        self._server = self._loop.run_until_complete(self._coro)
+        self._server = self.loop.run_until_complete(self._coro)
         print('Serving on {}'.format(self._server.sockets[0].getsockname()))
         try:
-            self._loop.run_forever()
+            self.loop.run_forever()
         except KeyboardInterrupt:
             pass
         finally:
             # Close the server
             self._server.close()
-            self._loop.run_until_complete(self._server.wait_closed())
-            self._loop.close()
+            self.loop.run_until_complete(self._server.wait_closed())
+            self.loop.close()
 
 
     async def handler(reader, writer):
