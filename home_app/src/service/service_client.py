@@ -9,14 +9,11 @@ from src.common import config
 
 class ServiceClient(asyncore.dispatcher):
 
-    def __init__(self, host, port, controller, callback, **kwargs):
+    def __init__(self,**kwargs):
         asyncore.dispatcher.__init__(self)
         self.create_socket()
-        self.connect( (host, port) )
-        self.controller = controller
-        self.callback = callback
-        self.get_remote_status = kwargs.get("get_remote_status", 0)
-        self.buffer = self.pack_data(controller)
+        self.connect( (config["server"]["host"], config["server"]["port"]) )
+        self.callback = kwargs.get("callback")
         self.event = Clock.schedule_interval(poll, 0)
 
     def handle_connect(self):
@@ -27,9 +24,6 @@ class ServiceClient(asyncore.dispatcher):
         self.event.cancel()
 
     def handle_read(self):
-        bcm_pin, state = self.unpack_data(self.recv(64))
-        print(bcm_pin, state)
-        self.callback(state)
         self.handle_close()
 
     def writable(self):
@@ -40,12 +34,7 @@ class ServiceClient(asyncore.dispatcher):
         self.buffer = self.buffer[sent:]
 
     def pack_data(self, controller):
-        return struct.pack(
-            config["struct_template"], 
-            controller.pin, 
-            controller.state,
-            self.get_remote_status)
+        raise NotImplementedError
 
     def unpack_data(self, value):
-        data = struct.unpack(config["struct_template"], value)
-        return data[0], data[1]
+        raise NotImplementedError
