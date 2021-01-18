@@ -11,7 +11,7 @@ class DeviceList:
                 if device.pin.number == value:
                     return device
         else:
-            raise Exception(f"No device found on this pin: {value}")
+            raise NoDevice(f"No device found on this pin: {value}")
     
     def __iter__(self):
         return iter(self.devices)
@@ -27,6 +27,10 @@ class DeviceList:
             if all(phrase in device.phrase_off for phrase in phrases):
                 return device, False
         return None, False
+
+class NoDevice(Exception):
+    def __init__(self, message):
+        self.message = message
 
 if __name__ == "__main__":
     devices = DeviceList()

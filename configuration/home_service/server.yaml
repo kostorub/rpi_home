@@ -2,13 +2,19 @@ server:
   host: "0.0.0.0"
   port: 7272
 
-# Description of the struct_template
+# Description of the relays_struct
 # < - little-endian
 # 0 - h - integer (short 2 bytes) - bcm_pin
 # 1 - ? - bool (Bool 1 byte) - on/off (0/1)
 # 2 - ? - bool (Bool 1 byte) - get_remote_status (0/1)
 
-struct_template: "<h??"
+# Description of the relays_struct
+# < - little-endian
+# 0 - h - integer (short 2 bytes) - bcm_pin
+# 1 - h - integer (short 2 bytes) - temperature
+# 2 - h - integer (short 2 bytes) - humidity
+
+relays_struct: "<h??"
 relays:
   - name: "Light test"
     bcm_pin: 5
@@ -22,6 +28,7 @@ buttons:
   - name: "Light test button"
     bcm_pin: 16
     control_pin: 5
+dht11s_struct: "<hhh"
 dht11s:
   - name: "Temperature and humidity DHT11"
     bcm_pin: 20

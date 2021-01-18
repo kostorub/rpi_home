@@ -1,6 +1,7 @@
 import asyncore
 import struct
 import asyncio
+from src.models.device_list import NoDevice
 
 class Server:
     def __init__(self, config, loop=None, **kwargs):
@@ -25,30 +26,31 @@ class Server:
 
 
     async def handler(self, reader, writer):
-        data = await reader.read(10)
+        data = await reader.read(20)
         addr = writer.get_extra_info("peername")
         print(f"Received {data} from {addr}")
         if data:
-            bcm_pin, activate, get_status = self.unpack_data(data)
-            relay = self.relays[bcm_pin]
-            if get_status:
-                writer.write(self.pack_data(relay))
-                await writer.drain()
-            if activate:
-                relay.on()
-            else:
-                relay.off()
-
-
-        writer.write(self.pack_data(relay))
-        await writer.drain()
+            try:
+                bcm_pin, activate, get_status = struct.unpack(self.config["relays_struct"], data)
+                relay = self.relays[bcm_pin]
+                if get_status:
+                    writer.write(struct.pack(self.config["relays_struct"], relay.pin.number, relay.value, False))
+                else:
+                    if activate:
+                        relay.on()
+                    else:
+                        relay.off()
+                    writer.write(self.pack_data(relay))
+            except NoDevice:
+                try:
+                    bcm_pin, _, _ = struct.unpack(self.config["dht11s_struct"], data)
+                    dht11 = self.dht11s[bcm_pin]
+                    writer.write(struct.pack(self.config["dht11s_struct"], dht11.pin, dht11.status))
+                except NoDevice as e:
+                    print(e.message)
+            await writer.drain()
+        else:
+            print("No data!")
 
         print("Close the client socket")
         writer.close()
-
-    def unpack_data(self, value):
-        data = struct.unpack(self.config["struct_template"], value)
-        return data[0], data[1], data[2]
-
-    def pack_data(self, relay):
-        return struct.pack(self.config["struct_template"], relay.pin.number, relay.value, False)
