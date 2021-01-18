@@ -1,5 +1,5 @@
 server:
-  host: "192.168.1.47"
+  host: "0.0.0.0"
   port: 7272
 
 # Description of the struct_template
@@ -22,9 +22,9 @@ buttons:
   - name: "Light test button"
     bcm_pin: 16
     control_pin: 5
-sensors:
-  - name: "Temperature and humidity"
-    bcm_pin: 16
-    phrase: "какая температура"
+dht11s:
+  - name: "Temperature and humidity DHT11"
+    bcm_pin: 20
+    phrase: "TODO какая температура"
 
-call_sign: "бэрримор"
+call_sign: "эй ты"
